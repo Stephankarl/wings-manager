@@ -1,0 +1,44 @@
+services:
+
+  frontend:
+    build:
+      context: ./frontend
+      target: dev-frontend
+    ports:
+      - 3000:3000
+    volumes:
+      - ./frontend:/usr/src/app
+    restart: always
+    networks:
+      - app
+    depends_on:
+      - backend
+
+  backend:
+    restart: always
+    build: 
+      context: ./backend
+      target: dev-backend
+    depends_on:
+      - db
+    volumes:
+      - ./backend:/usr/src/app
+    networks:
+      - server
+      - app
+    ports:
+      - 5532:5532
+
+  db:
+    image: mongo:7.0
+    restart: always
+    volumes:
+      - ./data:/data/db
+    networks:
+      - server
+    ports:
+      - 27017:27017
+
+networks:
+  server:
+  app:
